@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, FlatList } from 'react-native'
+import { View, Text, FlatList, TouchableOpacity } from 'react-native'
 import { connect } from 'react-redux'
 
 // More info here: https://facebook.github.io/react-native/docs/flatlist.html
@@ -12,15 +12,24 @@ import TransactionsActions from '../Redux/TransactionsRedux'
 import styles from './Styles/TransactionListStyle'
 
 class TransactionList extends React.PureComponent {
-  
+
   constructor(props) {
     super(props)
     this.props.getRates()
     this.props.getTransactions()
   }
 
-  componentWillUpdate(){
-    console.log("RATES: "+JSON.stringify(this.props.rates))
+  componentWillUpdate() {
+    console.log("RATES: " + JSON.stringify(this.props.rates))
+  }
+
+  goToDetail = (item) => {
+    this.props.navigation.navigate('TransactionDetail', {
+      sku: item.sku,
+      amount: item.amount,
+      currency: item.currency,
+      rates: this.props.rates
+    })
   }
 
   /* ***********************************************************
@@ -31,13 +40,17 @@ class TransactionList extends React.PureComponent {
   * e.g.
     return <MyCustomCell title={item.title} description={item.description} />
   *************************************************************/
-  renderRow({ item }) {
+  renderRow = ({ item }) => {
     return (
-      <View style={styles.row}>
-        <Text style={styles.boldLabel}>{item.sku}</Text>
-        <Text style={styles.boldLabel}>{item.amount}</Text>
-        <Text style={styles.label}>{item.currency}</Text>
-      </View>
+      <TouchableOpacity
+        onPress={() => this.goToDetail(item) }>
+        <View style={styles.row}>
+          <Text style={styles.boldLabel}>{item.sku}</Text>
+          <Text style={styles.boldLabel}>{item.amount}</Text>
+          <Text style={styles.label}>{item.currency}</Text>
+        </View>
+      </TouchableOpacity>
+
     )
   }
 
