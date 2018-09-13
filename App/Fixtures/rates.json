@@ -1,0 +1,32 @@
+[
+  {
+    "from": "AUD",
+    "to": "CAD",
+    "rate": "1.32"
+  },
+  {
+    "from": "CAD",
+    "to": "AUD",
+    "rate": "0.76"
+  },
+  {
+    "from": "AUD",
+    "to": "USD",
+    "rate": "0.8"
+  },
+  {
+    "from": "USD",
+    "to": "AUD",
+    "rate": "1.25"
+  },
+  {
+    "from": "CAD",
+    "to": "EUR",
+    "rate": "1.01"
+  },
+  {
+    "from": "EUR",
+    "to": "CAD",
+    "rate": "0.99"
+  }
+]

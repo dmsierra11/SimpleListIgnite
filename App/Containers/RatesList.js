@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, Text, FlatList } from 'react-native'
+import { View, Text, FlatList, ActivityIndicator } from 'react-native'
 import { connect } from 'react-redux'
+import RatesActions from '../Redux/RatesRedux'
 
 // More info here: https://facebook.github.io/react-native/docs/flatlist.html
 
@@ -8,21 +9,10 @@ import { connect } from 'react-redux'
 import styles from './Styles/RatesListStyle'
 
 class RatesList extends React.PureComponent {
-  /* ***********************************************************
-  * STEP 1
-  * This is an array of objects with the properties you desire
-  * Usually this should come from Redux mapStateToProps
-  *************************************************************/
-  state = {
-    dataObjects: [
-      {title: 'First Title', description: 'First Description'},
-      {title: 'Second Title', description: 'Second Description'},
-      {title: 'Third Title', description: 'Third Description'},
-      {title: 'Fourth Title', description: 'Fourth Description'},
-      {title: 'Fifth Title', description: 'Fifth Description'},
-      {title: 'Sixth Title', description: 'Sixth Description'},
-      {title: 'Seventh Title', description: 'Seventh Description'}
-    ]
+
+  constructor(props) {
+    super(props)
+    this.props.getRates()
   }
 
   /* ***********************************************************
@@ -33,11 +23,13 @@ class RatesList extends React.PureComponent {
   * e.g.
     return <MyCustomCell title={item.title} description={item.description} />
   *************************************************************/
-  renderRow ({item}) {
+  renderRow({ item }) {
+    console.log("RENDER ROW: "+JSON.stringify(item))
     return (
       <View style={styles.row}>
-        <Text style={styles.boldLabel}>{item.title}</Text>
-        <Text style={styles.label}>{item.description}</Text>
+        <Text style={styles.boldLabel}>{item.from}</Text>
+        <Text style={styles.boldLabel}>{item.to}</Text>
+        <Text style={styles.label}>{item.rate}</Text>
       </View>
     )
   }
@@ -65,7 +57,7 @@ class RatesList extends React.PureComponent {
   // The default function if no Key is provided is index
   // an identifiable key is important if you plan on
   // item reordering.  Otherwise index is fine
-  keyExtractor = (item, index) => index
+  keyExtractor = (item, index) => index.toString
 
   // How many items should be kept im memory as we scroll?
   oneScreensWorth = 20
@@ -84,12 +76,12 @@ class RatesList extends React.PureComponent {
   //   {length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index}
   // )}
 
-  render () {
+  render() {
     return (
       <View style={styles.container}>
         <FlatList
           contentContainerStyle={styles.listContent}
-          data={this.state.dataObjects}
+          data={this.props.dataObjects}
           renderItem={this.renderRow}
           keyExtractor={this.keyExtractor}
           initialNumToRender={this.oneScreensWorth}
@@ -105,12 +97,14 @@ class RatesList extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    // ...redux state to props here
+    dataObjects: state.rates.data,
+    fetching: state.rates.fetching
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    getRates: () => dispatch(RatesActions.ratesRequest())
   }
 }
 
