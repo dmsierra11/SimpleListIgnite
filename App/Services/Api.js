@@ -39,6 +39,7 @@ const create = (baseURL = 'http://quiet-stone-2094.herokuapp.com') => {
   // const getRate = () => api.get('rate_limit')
   // const getUser = (username) => api.get('search/users', {q: username})
   const getRates = () => api.get('rates')
+  const getTransactions = () => api.get('transactions')
 
   // ------
   // STEP 3
@@ -57,7 +58,8 @@ const create = (baseURL = 'http://quiet-stone-2094.herokuapp.com') => {
     // getRoot,
     // getRate,
     // getUser,
-    getRates
+    getRates,
+    getTransactions
   }
 }
 

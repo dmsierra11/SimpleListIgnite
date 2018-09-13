@@ -1,18 +1,26 @@
 import React from 'react'
-import { View, Text, FlatList, ActivityIndicator } from 'react-native'
+import { View, Text, FlatList } from 'react-native'
 import { connect } from 'react-redux'
-import RatesActions from '../Redux/RatesRedux'
 
 // More info here: https://facebook.github.io/react-native/docs/flatlist.html
 
+//Redux
+import RatesActions from '../Redux/RatesRedux'
+import TransactionsActions from '../Redux/TransactionsRedux'
+
 // Styles
-import styles from './Styles/RatesListStyle'
+import styles from './Styles/TransactionListStyle'
 
-class RatesList extends React.PureComponent {
-
+class TransactionList extends React.PureComponent {
+  
   constructor(props) {
     super(props)
     this.props.getRates()
+    this.props.getTransactions()
+  }
+
+  componentWillUpdate(){
+    console.log("RATES: "+JSON.stringify(this.props.rates))
   }
 
   /* ***********************************************************
@@ -24,12 +32,11 @@ class RatesList extends React.PureComponent {
     return <MyCustomCell title={item.title} description={item.description} />
   *************************************************************/
   renderRow({ item }) {
-    console.log("RENDER ROW: " + JSON.stringify(item))
     return (
       <View style={styles.row}>
-        <Text style={styles.boldLabel}>{item.from}</Text>
-        <Text style={styles.boldLabel}>{item.to}</Text>
-        <Text style={styles.label}>{item.rate}</Text>
+        <Text style={styles.boldLabel}>{item.sku}</Text>
+        <Text style={styles.boldLabel}>{item.amount}</Text>
+        <Text style={styles.label}>{item.currency}</Text>
       </View>
     )
   }
@@ -101,15 +108,17 @@ class RatesList extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   return {
-    dataObjects: state.rates.data,
-    fetching: state.rates.fetching
+    dataObjects: state.transactions.data,
+    fetching: state.transactions.fetching,
+    rates: state.rates.data
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getRates: () => dispatch(RatesActions.ratesRequest())
+    getRates: () => dispatch(RatesActions.ratesRequest()),
+    getTransactions: () => dispatch(TransactionsActions.transactionsRequest())
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RatesList)
+export default connect(mapStateToProps, mapDispatchToProps)(TransactionList)

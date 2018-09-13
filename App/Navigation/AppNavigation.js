@@ -1,17 +1,17 @@
 import { StackNavigator } from 'react-navigation'
-import RatesList from '../Containers/RatesList'
+import TransactionList from '../Containers/TransactionList'
 import LaunchScreen from '../Containers/LaunchScreen'
 
 import styles from './Styles/NavigationStyles'
 
 // Manifest of possible screens
 const PrimaryNav = StackNavigator({
-  RatesList: { screen: RatesList },
+  TransactionList: { screen: TransactionList },
   LaunchScreen: { screen: LaunchScreen }
 }, {
   // Default config for all screens
   headerMode: 'none',
-  initialRouteName: 'RatesList',
+  initialRouteName: 'TransactionList',
   navigationOptions: {
     headerStyle: styles.header
   }

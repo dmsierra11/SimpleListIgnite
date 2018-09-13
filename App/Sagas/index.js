@@ -7,12 +7,14 @@ import DebugConfig from '../Config/DebugConfig'
 
 import { StartupTypes } from '../Redux/StartupRedux'
 import { GithubTypes } from '../Redux/GithubRedux'
+import { TransactionsTypes } from '../Redux/TransactionsRedux'
 import { RatesTypes } from '../Redux/RatesRedux'
 
 /* ------------- Sagas ------------- */
 
 import { startup } from './StartupSagas'
 import { getUserAvatar } from './GithubSagas'
+import { getTransactions } from './TransactionsSagas'
 import { getRates } from './RatesSagas'
 
 /* ------------- API ------------- */
@@ -29,6 +31,7 @@ export default function * root () {
     takeLatest(StartupTypes.STARTUP, startup),
     // some sagas receive extra parameters in addition to an action
     takeLatest(GithubTypes.USER_REQUEST, getUserAvatar, api),
+    takeLatest(TransactionsTypes.TRANSACTIONS_REQUEST, getTransactions, api),
     takeLatest(RatesTypes.RATES_REQUEST, getRates, api)
   ])
 }
