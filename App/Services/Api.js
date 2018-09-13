@@ -2,7 +2,7 @@
 import apisauce from 'apisauce'
 
 // our "constructor"
-const create = (baseURL = 'http://quiet-stone-2094.herokuapp.com/') => {
+const create = (baseURL = 'http://quiet-stone-2094.herokuapp.com') => {
   // ------
   // STEP 1
   // ------
@@ -14,7 +14,8 @@ const create = (baseURL = 'http://quiet-stone-2094.herokuapp.com/') => {
     baseURL,
     // here are some default headers
     headers: {
-      'Cache-Control': 'no-cache'
+      'Cache-Control': 'no-cache',
+      'Accept': 'application/json',
     },
     // 10 second timeout...
     timeout: 10000
@@ -37,7 +38,7 @@ const create = (baseURL = 'http://quiet-stone-2094.herokuapp.com/') => {
   // const getRoot = () => api.get('')
   // const getRate = () => api.get('rate_limit')
   // const getUser = (username) => api.get('search/users', {q: username})
-  const getRates = () => api.get('rates.json')
+  const getRates = () => api.get('rates')
 
   // ------
   // STEP 3

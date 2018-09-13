@@ -24,7 +24,7 @@ class RatesList extends React.PureComponent {
     return <MyCustomCell title={item.title} description={item.description} />
   *************************************************************/
   renderRow({ item }) {
-    console.log("RENDER ROW: "+JSON.stringify(item))
+    console.log("RENDER ROW: " + JSON.stringify(item))
     return (
       <View style={styles.row}>
         <Text style={styles.boldLabel}>{item.from}</Text>
@@ -79,17 +79,21 @@ class RatesList extends React.PureComponent {
   render() {
     return (
       <View style={styles.container}>
-        <FlatList
-          contentContainerStyle={styles.listContent}
-          data={this.props.dataObjects}
-          renderItem={this.renderRow}
-          keyExtractor={this.keyExtractor}
-          initialNumToRender={this.oneScreensWorth}
-          ListHeaderComponent={this.renderHeader}
-          ListFooterComponent={this.renderFooter}
-          ListEmptyComponent={this.renderEmpty}
-          ItemSeparatorComponent={this.renderSeparator}
-        />
+        {this.props.fetching ?
+          <ActivityIndicator />
+          :
+          <FlatList
+            contentContainerStyle={styles.listContent}
+            data={this.props.dataObjects}
+            renderItem={this.renderRow}
+            keyExtractor={this.keyExtractor}
+            initialNumToRender={this.oneScreensWorth}
+            ListHeaderComponent={this.renderHeader}
+            ListFooterComponent={this.renderFooter}
+            ListEmptyComponent={this.renderEmpty}
+            ItemSeparatorComponent={this.renderSeparator}
+          />
+        }
       </View>
     )
   }
