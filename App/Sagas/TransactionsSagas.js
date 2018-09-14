@@ -1,20 +1,8 @@
-/* ***********************************************************
-* A short word on how to use this automagically generated file.
-* We're often asked in the ignite gitter channel how to connect
-* to a to a third party api, so we thought we'd demonstrate - but
-* you should know you can use sagas for other flow control too.
-*
-* Other points:
-*  - You'll need to add this saga to sagas/index.js
-*  - This template uses the api declared in sagas/index.js, so
-*    you'll need to define a constant in that file.
-*************************************************************/
-
 import { call, put, select } from 'redux-saga/effects'
 import TransactionsActions, { TransactionsSelectors } from '../Redux/TransactionsRedux'
 
 const selectCurrentData = (state) => state.transactions.data
-const selectCurrentRates = (state) => state.rates.data
+const selectCurrentRates = (state) => state.rates.rates_recalculated
 
 export function* getTransactions(api, action) {
   const { data } = action
@@ -40,48 +28,39 @@ export function* getTotalTransactions(action) {
   let item_found = false
   console.log("SKU: ", sku)
   console.log("CURRENCY: ", currency)
+  console.log("CURRENT DATA: ", currentData)
+  const transactionsById = currentData.filter((value, index, array) => {
+    return value.sku === sku
+  })
+  console.log("TRANSACTIONS BY "+sku+" ",transactionsById)
   // let currency = ''
-  for (index = 0; index < currentData.length; index++) {
-    let item = currentData[index]
-    if (sku === item.sku) {
-      let amount = item.amount
-      if (item.currency !== currency) {
-        console.log("Have to convert " + item.amount + " " + item.currency + " to " + currency)
-        amount = yield call(_convert, item.amount, item.currency, currency)
-        console.log("Converted " + item.amount + " to " + amount)
-      }
-      amounts_to_sum.push(amount)
-    }
+  for (let index = 0; index < transactionsById.length; index++) {
+    let item = transactionsById[index]
+    let amount = item.amount
+    if (item.currency !== currency)
+      amount = yield call(_convert, item.amount, item.currency, currency)
+    amounts_to_sum.push(amount)
   }
+
   console.log("Amounts to sum: ", amounts_to_sum)
   let total = yield call(sumValues, amounts_to_sum)
   return yield put(TransactionsActions.setTotalTransactions(total.toFixed(2)))
 }
 
 function* _convert(amount, from, to) {
+  console.log("CONVERTING FROM "+from+" to "+to)
   let other_currencies = []
-  console.log("CONVERTING " + amount + " FROM " + from + " TO " + to)
   const currentRates = yield select(selectCurrentRates)
-  console.log("RATES: ", currentRates)
+  console.log("CURRENT RATES: ", currentRates)
   for (i = 0; i < currentRates.length; i++) {
     let item = currentRates[i]
+    console.log("ITEM ",item)
     if (item.from === from) {
-      console.log("Found conversion from " + item.from + " to " + item.to)
-      let converted = parseFloat(amount)*parseFloat(item.rate)
-      console.log("Converted from "+amount+" to "+converted+" at "+item.rate+" rate ")
+      let converted = parseFloat(amount) * parseFloat(item.rate)
       if (item.to === to) {
         return converted
-      } else {
-        other_currencies.push({currency: item.to, amount: converted})
       }
     }
-  }
-  console.log("Couldnt find direct conversion, found these: ", other_currencies)
-  for (i = 0; i < other_currencies.length; i++){
-    let item = other_currencies[i]
-    console.log("Looking for secondary conversion "+" "+item.amount+" "+item.currency+" to "+to)
-    let converted = yield call(_convert, item.amount, item.currency, to)
-    return converted
   }
 }
 

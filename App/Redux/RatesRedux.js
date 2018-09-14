@@ -6,7 +6,8 @@ import Immutable from 'seamless-immutable'
 const { Types, Creators } = createActions({
   ratesRequest: null,
   ratesSuccess: ['payload'],
-  ratesFailure: null
+  ratesFailure: null,
+  setAllRates: ['all_rates']
 })
 
 export const RatesTypes = Types
@@ -18,7 +19,8 @@ export const INITIAL_STATE = Immutable({
   data: null,
   fetching: null,
   payload: null,
-  error: null
+  error: null,
+  rates_recalculated: []
 })
 
 /* ------------- Selectors ------------- */
@@ -43,10 +45,16 @@ export const success = (state, action) => {
 export const failure = state =>
   state.merge({ fetching: false, error: true, payload: null })
 
+export const setAllRates = (state, { all_rates }) => {
+  console.log("RATES RECALCULATED: ", all_rates)
+  return state.merge({ rates_recalculated: all_rates })
+}
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.RATES_REQUEST]: request,
   [Types.RATES_SUCCESS]: success,
-  [Types.RATES_FAILURE]: failure
+  [Types.RATES_FAILURE]: failure,
+  [Types.SET_ALL_RATES]: setAllRates
 })
