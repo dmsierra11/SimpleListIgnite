@@ -17,7 +17,7 @@ export default Creators
 /* ------------- Initial State ------------- */
 
 export const INITIAL_STATE = Immutable({
-  data: null,
+  data: [],
   fetching: null,
   payload: null,
   error: null,
@@ -37,8 +37,7 @@ export const request = (state) =>
   state.merge({ fetching: true })
 
 // successful api lookup
-export const success = (state, action) => {
-  const { payload } = action
+export const success = (state, { payload }) => {
   return state.merge({ fetching: false, error: null, data: payload })
 }
 
@@ -47,11 +46,10 @@ export const failure = state =>
   state.merge({ fetching: false, error: true, payload: null })
 
 export const getTotalTransactions = (state, item) => {
-  console.log("ITEM SKU: "+item.sku)
   return state.merge({ item })
 }
 
-export const setTotalTransactions = (state, {result}) => {
+export const setTotalTransactions = (state, { result }) => {
   return state.merge({ total_by_sku: result })
 }
 
