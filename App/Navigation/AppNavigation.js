@@ -12,7 +12,7 @@ const PrimaryNav = StackNavigator({
   LaunchScreen: { screen: LaunchScreen }
 }, {
   // Default config for all screens
-  headerMode: 'none',
+  headerMode: 'screen',
   initialRouteName: 'TransactionList',
   navigationOptions: {
     headerStyle: styles.header
