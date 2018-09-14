@@ -2,7 +2,7 @@
 import apisauce from 'apisauce'
 
 // our "constructor"
-const create = (baseURL = 'http://quiet-stone-2094.herokuapp.com') => {
+const create = (baseURL = 'https://quiet-stone-2094.herokuapp.com') => {
   // ------
   // STEP 1
   // ------
