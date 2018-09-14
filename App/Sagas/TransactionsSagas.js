@@ -34,56 +34,75 @@ export function* getTransactions(api, action) {
 }
 
 export function* getTotalTransactions(action) {
-  console.log("ACTION: "+JSON.stringify(action))
-  const { sku } = action
+  const { sku, currency } = action.item
   const currentData = yield select(selectCurrentData)
   let amounts_to_sum = []
   let item_found = false
-  let currency = ''
-  for (index = 0; index < currentData.length; index++){
+  console.log("SKU: ", sku)
+  console.log("CURRENCY: ", currency)
+  // let currency = ''
+  for (index = 0; index < currentData.length; index++) {
     let item = currentData[index]
-    if (item.sku === sku && !item_found) {
-      currency = item.currency
-      item_found = true
-      for (i = index; i < currentData.length; i++) {
-        currentItem = currentData[i]
-        if (currentItem.sku === item.sku) {
-          let amount = currentItem.amount
-          if (currentItem.currency !== currency)
-            amount = yield call(calculateRate, currentItem.amount, currency, currentItem.currency)
-          amounts_to_sum.push(amount)
-        }
+    if (sku === item.sku) {
+      let amount = item.amount
+      if (item.currency !== currency) {
+        console.log("Have to convert " + item.amount + " " + item.currency + " to " + currency)
+        amount = yield call(_convert, item.amount, item.currency, currency)
+        console.log("Converted " + item.amount + " to " + amount)
       }
-      yield call(sumValues, amounts_to_sum, currency)
+      amounts_to_sum.push(amount)
     }
   }
+  console.log("Amounts to sum: ", amounts_to_sum)
+  let total = yield call(sumValues, amounts_to_sum)
+  return yield put(TransactionsActions.setTotalTransactions(total.toFixed(2)))
 }
 
-function* calculateRate(amount, from, to){
-  console.log("CONVERTING FROM "+from+" TO "+to)
-  let rates_avail = []
+function* _convert(amount, from, to) {
+  let converted = 0
+  console.log("CONVERTING " + amount + " FROM " + from + " TO " + to)
   const currentRates = yield select(selectCurrentRates)
-  console.log("RATES: "+JSON.stringify(currentRates))
-  for (i = 0; i < currentRates.length ; i++){
-    let current = currentRates[i]
-    if (current.from === from){
-      if (current.to === to){
-        console.log("AMOUNT: "+amount)
-        console.log("RATE: "+current.rate)
-        return (parseFloat(amount)/parseFloat(current.rate)).toFixed(2)
+  console.log("RATES: ", currentRates)
+  for (i = 0; i < currentRates.length; i++) {
+    let item = currentRates[i]
+    if (item.from === from) {
+      console.log("Found conversion from " + item.from + " to " + item.to)
+      if (item.to === to) {
+        converted = parseFloat(amount)*parseFloat(item.rate)
+        console.log("Converted from "+amount+" to "+converted+" at "+item.rate+" rate ")
+        return converted
       }
-      else rates_avail.push(current.to)
     }
   }
-  console.log("RATES AVAILABLE: "+JSON.stringify(rates_avail))
-  return -1
+  return converted
 }
 
-function* sumValues(values, currency) {
-  console.log("Adding values: "+JSON.stringify(values))
+// function* calculateRate(amount, from, to) {
+//   console.log("CONVERTING FROM " + from + " TO " + to)
+//   let rates_avail = []
+//   const currentRates = yield select(selectCurrentRates)
+//   console.log("RATES: " + JSON.stringify(currentRates))
+//   for (i = 0; i < currentRates.length; i++) {
+//     let current = currentRates[i]
+//     if (current.from === from) {
+//       if (current.to === to) {
+//         console.log("AMOUNT: " + amount)
+//         console.log("RATE: " + current.rate)
+//         return (parseFloat(amount) / parseFloat(current.rate)).toFixed(2)
+//       }
+//       else rates_avail.push(current.to)
+//     }
+//   }
+//   console.log("RATES AVAILABLE: " + JSON.stringify(rates_avail))
+//   return -1
+// }
+
+function* sumValues(values) {
+  console.log("Adding values: " + JSON.stringify(values))
   let total = 0
   for (i = 0; i < values.length; i++) {
     total += parseFloat(values[i])
   }
-  yield put(TransactionsActions.setTotalTransactions(total.toFixed(2)))
+  console.log("Total: ", total)
+  return total
 }

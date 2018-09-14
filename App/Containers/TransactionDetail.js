@@ -13,20 +13,16 @@ class TransactionDetail extends Component {
     super(props)
     this.state = {}
     this.sku = this.props.navigation.state.params.sku
-    console.log("ITEM SKU PRE: "+this.sku)
-    this.props.getTotalTransactions(this.sku)
+    this.currency = this.props.navigation.state.params.currency
+    this.props.getTotalTransactions(this.sku, this.currency)
   }
 
   render () {
-    const { navigation } = this.props
-    // const sku = navigation.state.params.sku
-    // const amount = navigation.state.params.amount
-    const currency = navigation.state.params.currency
     return (
       <View style={styles.container}>
         <Text style={styles.big_text}>{this.sku}</Text>
         <Text style={styles.medium_text}>{this.props.total}</Text>
-        <Text style={styles.medium_text}>{currency}</Text>
+        <Text style={styles.medium_text}>{this.currency}</Text>
       </View>
     )
   }
@@ -40,7 +36,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getTotalTransactions: (sku) => dispatch(TransactionActions.getTotalTransactions(sku)),
+    getTotalTransactions: (sku, currency) => dispatch(TransactionActions.getTotalTransactions({sku: sku, currency: currency})),
     getTransactions: () => dispatch(TransactionActions.transactionsRequest())
   }
 }

@@ -7,7 +7,7 @@ const { Types, Creators } = createActions({
   transactionsRequest: ['data'],
   transactionsSuccess: ['payload'],
   transactionsFailure: null,
-  getTotalTransactions: ['sku'],
+  getTotalTransactions: ['item'],
   setTotalTransactions: ['result']
 })
 
@@ -45,7 +45,7 @@ export const success = (state, { payload }) => {
 export const failure = state =>
   state.merge({ fetching: false, error: true, payload: null })
 
-export const getTotalTransactions = (state, item) => {
+export const getTotalTransactions = (state, {item}) => {
   return state.merge({ item })
 }
 
