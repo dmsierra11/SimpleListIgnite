@@ -59,7 +59,7 @@ export function* getTotalTransactions(action) {
 }
 
 function* _convert(amount, from, to) {
-  let converted = 0
+  let other_currencies = []
   console.log("CONVERTING " + amount + " FROM " + from + " TO " + to)
   const currentRates = yield select(selectCurrentRates)
   console.log("RATES: ", currentRates)
@@ -67,35 +67,23 @@ function* _convert(amount, from, to) {
     let item = currentRates[i]
     if (item.from === from) {
       console.log("Found conversion from " + item.from + " to " + item.to)
+      let converted = parseFloat(amount)*parseFloat(item.rate)
+      console.log("Converted from "+amount+" to "+converted+" at "+item.rate+" rate ")
       if (item.to === to) {
-        converted = parseFloat(amount)*parseFloat(item.rate)
-        console.log("Converted from "+amount+" to "+converted+" at "+item.rate+" rate ")
         return converted
+      } else {
+        other_currencies.push({currency: item.to, amount: converted})
       }
     }
   }
-  return converted
+  console.log("Couldnt find direct conversion, found these: ", other_currencies)
+  for (i = 0; i < other_currencies.length; i++){
+    let item = other_currencies[i]
+    console.log("Looking for secondary conversion "+" "+item.amount+" "+item.currency+" to "+to)
+    let converted = yield call(_convert, item.amount, item.currency, to)
+    return converted
+  }
 }
-
-// function* calculateRate(amount, from, to) {
-//   console.log("CONVERTING FROM " + from + " TO " + to)
-//   let rates_avail = []
-//   const currentRates = yield select(selectCurrentRates)
-//   console.log("RATES: " + JSON.stringify(currentRates))
-//   for (i = 0; i < currentRates.length; i++) {
-//     let current = currentRates[i]
-//     if (current.from === from) {
-//       if (current.to === to) {
-//         console.log("AMOUNT: " + amount)
-//         console.log("RATE: " + current.rate)
-//         return (parseFloat(amount) / parseFloat(current.rate)).toFixed(2)
-//       }
-//       else rates_avail.push(current.to)
-//     }
-//   }
-//   console.log("RATES AVAILABLE: " + JSON.stringify(rates_avail))
-//   return -1
-// }
 
 function* sumValues(values) {
   console.log("Adding values: " + JSON.stringify(values))
