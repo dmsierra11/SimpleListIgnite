@@ -1,6 +1,7 @@
 import React from 'react'
 import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native'
 import { connect } from 'react-redux'
+import Colors from '../Themes/Colors'
 
 // More info here: https://facebook.github.io/react-native/docs/flatlist.html
 
@@ -19,6 +20,9 @@ class TransactionList extends React.PureComponent {
 
   constructor(props) {
     super(props)
+  }
+
+  componentDidMount() {
     this.props.getRates()
     this.props.getTransactions()
   }
@@ -28,7 +32,6 @@ class TransactionList extends React.PureComponent {
       sku: item.sku,
       amount: item.amount,
       currency: item.currency,
-      rates: this.props.rates
     })
   }
 
@@ -43,7 +46,7 @@ class TransactionList extends React.PureComponent {
   renderRow = ({ item }) => {
     return (
       <TouchableOpacity
-        onPress={() => this.goToDetail(item) }>
+        onPress={() => this.goToDetail(item)}>
         <View style={styles.row}>
           <Text style={styles.boldLabel}>{item.sku}</Text>
           <Text style={styles.boldLabel}>{item.amount}</Text>
@@ -100,7 +103,7 @@ class TransactionList extends React.PureComponent {
     return (
       <View style={styles.container}>
         {this.props.fetching ?
-          <ActivityIndicator />
+          <ActivityIndicator size="large" color={Colors.frost} />
           :
           <FlatList
             contentContainerStyle={styles.listContent}
@@ -121,7 +124,6 @@ const mapStateToProps = (state) => {
   return {
     dataObjects: state.transactions.data,
     fetching: state.transactions.fetching,
-    rates: state.rates.data
   }
 }
 
