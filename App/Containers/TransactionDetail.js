@@ -2,27 +2,31 @@ import React, { Component } from 'react'
 import { View, Text } from 'react-native'
 import { connect } from 'react-redux'
 // Add Actions - replace 'Your' with whatever your reducer is called :)
-// import YourActions from '../Redux/YourRedux'
+import TransactionActions from '../Redux/TransactionsRedux'
 
 // Styles
 import styles from './Styles/TransactionDetailStyle'
 
 class TransactionDetail extends Component {
-  // constructor (props) {
-  //   super(props)
-  //   this.state = {}
-  // }
+
+  constructor (props) {
+    super(props)
+    this.state = {}
+    this.sku = this.props.navigation.state.params.sku
+    console.log("ITEM SKU PRE: "+this.sku)
+    this.props.getTotalTransactions(this.sku)
+  }
 
   render () {
     const { navigation } = this.props
-    const sku = navigation.state.params.sku
-    const amount = navigation.state.params.amount
-    const total = navigation.state.params.currency
+    // const sku = navigation.state.params.sku
+    // const amount = navigation.state.params.amount
+    const currency = navigation.state.params.currency
     return (
       <View style={styles.container}>
-        <Text style={styles.big_text}>{sku}</Text>
-        <Text style={styles.medium_text}>{amount}</Text>
-        <Text style={styles.medium_text}>{total}</Text>
+        <Text style={styles.big_text}>{this.sku}</Text>
+        <Text style={styles.medium_text}>{this.props.total}</Text>
+        <Text style={styles.medium_text}>{currency}</Text>
       </View>
     )
   }
@@ -30,11 +34,14 @@ class TransactionDetail extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    total: state.transactions.total_by_sku
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    getTotalTransactions: (sku) => dispatch(TransactionActions.getTotalTransactions(sku)),
+    getTransactions: () => dispatch(TransactionActions.transactionsRequest())
   }
 }
 

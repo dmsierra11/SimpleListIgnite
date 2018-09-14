@@ -6,7 +6,9 @@ import Immutable from 'seamless-immutable'
 const { Types, Creators } = createActions({
   transactionsRequest: ['data'],
   transactionsSuccess: ['payload'],
-  transactionsFailure: null
+  transactionsFailure: null,
+  getTotalTransactions: ['sku'],
+  setTotalTransactions: ['result']
 })
 
 export const TransactionsTypes = Types
@@ -18,7 +20,8 @@ export const INITIAL_STATE = Immutable({
   data: null,
   fetching: null,
   payload: null,
-  error: null
+  error: null,
+  total_by_sku: 0
 })
 
 /* ------------- Selectors ------------- */
@@ -43,10 +46,21 @@ export const success = (state, action) => {
 export const failure = state =>
   state.merge({ fetching: false, error: true, payload: null })
 
+export const getTotalTransactions = (state, item) => {
+  console.log("ITEM SKU: "+item.sku)
+  return state.merge({ item })
+}
+
+export const setTotalTransactions = (state, {result}) => {
+  return state.merge({ total_by_sku: result })
+}
+
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.TRANSACTIONS_REQUEST]: request,
   [Types.TRANSACTIONS_SUCCESS]: success,
-  [Types.TRANSACTIONS_FAILURE]: failure
+  [Types.TRANSACTIONS_FAILURE]: failure,
+  [Types.GET_TOTAL_TRANSACTIONS]: getTotalTransactions,
+  [Types.SET_TOTAL_TRANSACTIONS]: setTotalTransactions
 })

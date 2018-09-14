@@ -14,7 +14,7 @@ import { RatesTypes } from '../Redux/RatesRedux'
 
 import { startup } from './StartupSagas'
 import { getUserAvatar } from './GithubSagas'
-import { getTransactions } from './TransactionsSagas'
+import { getTransactions, getTotalTransactions } from './TransactionsSagas'
 import { getRates } from './RatesSagas'
 
 /* ------------- API ------------- */
@@ -32,6 +32,7 @@ export default function * root () {
     // some sagas receive extra parameters in addition to an action
     takeLatest(GithubTypes.USER_REQUEST, getUserAvatar, api),
     takeLatest(TransactionsTypes.TRANSACTIONS_REQUEST, getTransactions, api),
+    takeLatest(TransactionsTypes.GET_TOTAL_TRANSACTIONS, getTotalTransactions),
     takeLatest(RatesTypes.RATES_REQUEST, getRates, api)
   ])
 }
