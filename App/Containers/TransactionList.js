@@ -13,14 +13,14 @@ import styles from './Styles/TransactionListStyle'
 
 class TransactionList extends React.PureComponent {
 
+  static defaultProps = {
+    dataObjects: []
+  }
+
   constructor(props) {
     super(props)
     this.props.getRates()
     this.props.getTransactions()
-  }
-
-  componentWillUpdate() {
-    console.log("RATES: " + JSON.stringify(this.props.rates))
   }
 
   goToDetail = (item) => {
@@ -77,7 +77,7 @@ class TransactionList extends React.PureComponent {
   // The default function if no Key is provided is index
   // an identifiable key is important if you plan on
   // item reordering.  Otherwise index is fine
-  keyExtractor = (item, index) => index.toString
+  keyExtractor = (item, index) => index.toString()
 
   // How many items should be kept im memory as we scroll?
   oneScreensWorth = 20
@@ -108,8 +108,6 @@ class TransactionList extends React.PureComponent {
             renderItem={this.renderRow}
             keyExtractor={this.keyExtractor}
             initialNumToRender={this.oneScreensWorth}
-            ListHeaderComponent={this.renderHeader}
-            ListFooterComponent={this.renderFooter}
             ListEmptyComponent={this.renderEmpty}
             ItemSeparatorComponent={this.renderSeparator}
           />
