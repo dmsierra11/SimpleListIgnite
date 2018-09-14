@@ -36,16 +36,11 @@ export function* getTransactions(api, action) {
 export function* getTotalTransactions(action) {
   console.log("ACTION: "+JSON.stringify(action))
   const { sku } = action
-  // console.log("SKU: "+sku)
-  // const currentData = yield select(TransactionsSelectors.getData)
   const currentData = yield select(selectCurrentData)
-  // console.log("CURRENT DATA: "+JSON.stringify(currentData))
   let amounts_to_sum = []
-  // let totals = []
   let item_found = false
   for (index = 0; index < currentData.length; index++){
     let item = currentData[index]
-    // console.log("ITEM SKU: "+item_sku)
     if (item.sku = sku && !item_found) {
       item_found = true
       console.log("Go through the whole array to find index")
@@ -54,13 +49,9 @@ export function* getTotalTransactions(action) {
           amounts_to_sum.push(currentData[i].amount)
         }
       }
-
-      // totals.push({ sku: item.sku, total: total })
-      // amounts_to_sum = []
     }
   }
   yield call(sumValues, amounts_to_sum)
-  // yield put(TransactionsActions.setTotalTransactions(0))
 }
 
 function* sumValues(values) {
@@ -69,7 +60,5 @@ function* sumValues(values) {
   for (i = 0; i < values.length; i++) {
     total += parseFloat(values[i])
   }
-  // return total 
-  console.log("TOTAL: "+total)
   yield put(TransactionsActions.setTotalTransactions(total.toFixed(2)))
 }
